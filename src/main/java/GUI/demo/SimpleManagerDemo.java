@@ -22,7 +22,7 @@ public class SimpleManagerDemo {
 		// Platform.instance().setAdjustForPlatform(true);
 
 		// makes a factory with the built-in clean dark theme
-		NotificationFactory factory = new NotificationFactory(ThemePackagePresets.cleanDark());
+		NotificationFactory factory = new NotificationFactory(ThemePackagePresets.cleanLight());
 		// a normal manager that just pops up the notification
 		NotificationManager plain = new SimpleManager(Location.NORTHWEST);
 		// a fade manager that will make the window fade in and out over a two second period

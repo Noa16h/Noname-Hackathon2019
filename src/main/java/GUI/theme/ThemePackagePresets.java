@@ -35,13 +35,13 @@ public class ThemePackagePresets {
 		WindowTheme window = new WindowTheme();
 		window.background = new Color(0, 0, 0);
 		window.foreground = new Color(16, 124, 162);
-		window.opacity = 0.8f;
+		window.opacity = 1.0f;
 		window.width = 300;
 		window.height = 100;
 
 		TextTheme text = new TextTheme();
-		text.title = new Font("Arial", Font.BOLD, 22);
-		text.subtitle = new Font("Arial", Font.PLAIN, 16);
+		text.title = new Font("Comic Sans MS", Font.BOLD, 22);
+		text.subtitle = new Font("Comic Sans MS", Font.PLAIN, 16);
 		text.titleColor = new Color(200, 200, 200);
 		text.subtitleColor = new Color(200, 200, 200);
 
@@ -50,6 +50,29 @@ public class ThemePackagePresets {
 
 		return pack;
 	}
+
+	public static ThemePackage dracula() {
+		ThemePackage pack = new ThemePackage();
+
+		WindowTheme window = new WindowTheme();
+		window.background = new Color(0, 0, 0);
+		window.foreground = new Color(16, 124, 162);
+		window.opacity = 1.0f;
+		window.width = 300;
+		window.height = 100;
+
+		TextTheme text = new TextTheme();
+		text.title = new Font("Courier", Font.BOLD, 22);
+		text.subtitle = new Font("Courier", Font.PLAIN, 16);
+		text.titleColor = new Color(100, 200, 000);
+		text.subtitleColor = new Color(200, 200, 200);
+
+		pack.setTheme(WindowTheme.class, window);
+		pack.setTheme(TextTheme.class, text);
+
+		return pack;
+	}
+
 
 	public static ThemePackage aqua() {
 		ThemePackage pack = new ThemePackage();
