@@ -24,6 +24,8 @@ public class FaceRecognition {
     private final OpenCVFrameConverter.ToMat converter;
     private final CascadeClassifier classifier;
 
+    private CanvasFrame debugFrame;
+
     public FaceRecognition() throws IOException {
         classifier = new CascadeClassifier(loadClassifier());
         converter = new OpenCVFrameConverter.ToMat();
@@ -46,11 +48,11 @@ public class FaceRecognition {
         return converter.convertToMat(frame);
     }
 
-    public static void main(String[] main) throws IOException {
-        FaceRecognition faceRecog = new FaceRecognition();
+    public void createDebugFrame() throws FrameGrabber.Exception {
+        CanvasFrame canvasFrame = new CanvasFrame("Some Title", CanvasFrame.getDefaultGamma() / grabber.getGamma());
 
-        Frame frame = faceRecog.grabFrame();
-        Mat grabbedImage = faceRecog.convertFrame(frame);
+        Frame frame = grabFrame();
+        Mat grabbedImage = convertFrame(frame);
         int height = grabbedImage.rows();
         int width = grabbedImage.cols();
 
@@ -60,10 +62,6 @@ public class FaceRecognition {
         Mat grayImage = new Mat(height, width, CV_8UC1);
         Mat rotatedImage = grabbedImage.clone();
 
-        // CanvasFrame is a JFrame containing a Canvas component, which is hardware accelerated.
-        // It can also switch into full-screen mode when called with a screenNumber.
-        // We should also specify the relative monitor/camera response for proper gamma correction.
-        CanvasFrame canvasFrame = new CanvasFrame("Some Title", CanvasFrame.getDefaultGamma() / grabber.getGamma());
 
         // Let's create some random 3D rotation...
         Mat randomR = new Mat(3, 3, CV_64FC1),
@@ -84,7 +82,7 @@ public class FaceRecognition {
         // We can allocate native arrays using constructors taking an integer as argument.
         Point hatPoints = new Point(3);
 
-        while (frame.isVisible() && (grabbedImage = converter.convert(grabber.grab())) != null) {
+        while (canvasFrame.isVisible() && (grabbedImage = converter.convert(grabber.grab())) != null) {
             // Let's try to detect some faces! but we need a grayscale image...
             cvtColor(grabbedImage, grayImage, CV_BGR2GRAY);
             RectVector faces = new RectVector();
@@ -102,7 +100,35 @@ public class FaceRecognition {
             canvasFrame.showImage(rotatedFrame);
         }
         canvasFrame.dispose();
+    }
 
+    public int getDistanceOfNearestFace() throws FrameGrabber.Exception {
+        Frame frame = grabFrame();
+        Mat grabbedImage = convertFrame(frame);
+        int height = grabbedImage.rows();
+        int width = grabbedImage.cols();
+
+        // Objects allocated with `new`, clone(), or a create*() factory method are automatically released
+        // by the garbage collector, but may still be explicitly released by calling deallocate().
+        // You shall NOT call cvReleaseImage(), cvReleaseMemStorage(), etc. on objects allocated this way.
+        Mat grayImage = new Mat(height, width, CV_8UC1);
+        Mat rotatedImage = grabbedImage.clone();
+
+        // Let's try to detect some faces! but we need a grayscale image...
+        cvtColor(grabbedImage, grayImage, CV_BGR2GRAY);
+        RectVector faces = new RectVector();
+        classifier.detectMultiScale(grayImage, faces);
+
+        int max_width = 0;
+        long total = faces.size();
+        for (long i = 0; i < total; i++) {
+            Rect r = faces.get(i);
+            if(max_width < r.width()) {
+                max_width = r.width();
+            }
+        }
+
+        return max_width;
     }
 
 }
